@@ -7,6 +7,7 @@ namespace NOxAcquisition
     {
         private static RegisterSet _set = new RegisterSet();
         private static ModbusProvider _provider;
+        private static StorageProviderBase _storage = null;
         private static bool _cancel = false;
 
         static void Main(string[] args)
@@ -26,6 +27,14 @@ namespace NOxAcquisition
             });
             _set.RegisterValueChanged += set_RegisterValueChanged;
             _provider = new ModbusProvider("10.208.146.181", 502);
+            try
+            {
+                _storage = new CsvProvider(args[0], _set);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
             while (!_cancel)
             {
                 _provider.ReadAll(_set);
@@ -44,6 +53,7 @@ namespace NOxAcquisition
         {
             var reg = (IModbusRegister)sender;
             Console.WriteLine($"{reg.Name} = {e} -> {reg.GetValue()}");
+            if (_storage != null) _storage.Store();
         }
     }
 }

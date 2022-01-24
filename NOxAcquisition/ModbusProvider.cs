@@ -33,7 +33,14 @@ namespace NOxAcquisition
         {
             foreach (var item in s.GetAll())
             {
-                ReadRegister(item);
+                try
+                {
+                    ReadRegister(item);
+                }
+                catch (NotImplementedException)
+                {
+
+                }
             }
         }
 
