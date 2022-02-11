@@ -16,9 +16,9 @@ public class CsvProvider : StorageProviderBase
 
     public CsvProvider(string folder, RegisterSet regs) : base(regs)
     {
-        string p = Path.Combine(folder, DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss.csv"));
+        string p = Path.Combine(folder, DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".csv");
         var cc = new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture);
-        cc.Delimiter = Delimeter;
+        if (Delimeter != null) cc.Delimiter = Delimeter;
         _writer = new CsvWriter(new StreamWriter(p), cc);
         _writer.WriteField("Time");
         foreach (var item in regs.GetAll())
@@ -36,10 +36,12 @@ public class CsvProvider : StorageProviderBase
             _writer.WriteField(item.GetValue());
         }
         _writer.NextRecord();
+        _writer.FlushAsync();
     }
 
     public override void Dispose()
     {
+        _writer.Flush();
         _writer.Dispose();
     }
 }

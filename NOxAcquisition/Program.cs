@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace NOxAcquisition
 {
@@ -26,21 +27,32 @@ namespace NOxAcquisition
 
             });
             _set.RegisterValueChanged += set_RegisterValueChanged;
-            _provider = new ModbusProvider("10.208.146.181", 502);
+            _provider = new ModbusProvider(args.Length > 1 ? args[1] : "167.116.185.10", 502);
             try
             {
+                if (!Directory.Exists(args[0])) Directory.CreateDirectory(args[0]);
                 _storage = new CsvProvider(args[0], _set);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+                if (_storage == null) Console.WriteLine("WARNING: failed to initialize storage provider.");
             }
             while (!_cancel)
             {
                 _provider.ReadAll(_set);
+                if (_storage != null) _storage.Store();
                 System.Threading.Thread.Sleep(10000);
             }
-            _provider.Dispose();
+            try 
+            {
+                _provider.Dispose();
+                _storage.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
@@ -53,7 +65,6 @@ namespace NOxAcquisition
         {
             var reg = (IModbusRegister)sender;
             Console.WriteLine($"{reg.Name} = {e} -> {reg.GetValue()}");
-            if (_storage != null) _storage.Store();
         }
     }
 }
