@@ -10,6 +10,7 @@ namespace NOxAcquisition
         private static ModbusProvider _provider;
         private static StorageProviderBase _storage = null;
         private static bool _cancel = false;
+        private static bool _changed = false;
 
         static void Main(string[] args)
         {
@@ -40,8 +41,9 @@ namespace NOxAcquisition
             }
             while (!_cancel)
             {
+                _changed = false;
                 _provider.ReadAll(_set);
-                if (_storage != null) _storage.Store();
+                if (_storage != null && _changed) _storage.Store();
                 System.Threading.Thread.Sleep(10000);
             }
             try 
@@ -63,6 +65,7 @@ namespace NOxAcquisition
 
         private static void set_RegisterValueChanged(object sender, object e)
         {
+            _changed = true;
             var reg = (IModbusRegister)sender;
             Console.WriteLine($"{reg.Name} = {e} -> {reg.GetValue()}");
         }
