@@ -14,6 +14,12 @@ namespace NOxAcquisition
 
         static void Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                Console.WriteLine(@"Usage:
+    NOxAcquisiton.exe ""Folder to save CSVs to"" [Instrument IP address, default = 167.116.185.10]");
+                return;
+            }
             Console.CancelKeyPress += Console_CancelKeyPress;
             Console.WriteLine("Modbus toolkit started.");
             _set.SetSingleRegisters(new List<FloatSingleRegister>()
