@@ -21,7 +21,8 @@ namespace NOxAcquisition
                 return;
             }
             Console.CancelKeyPress += Console_CancelKeyPress;
-            Console.WriteLine("Modbus toolkit started.");
+            string ip = args.Length > 1 ? args[1] : "167.116.185.10";
+            Console.WriteLine($"Modbus toolkit started. Using IP = {ip}");
             _set.SetSingleRegisters(new List<FloatSingleRegister>()
             {
                 new FloatSingleRegister("NO2 Stability", 16),
@@ -34,7 +35,7 @@ namespace NOxAcquisition
 
             });
             _set.RegisterValueChanged += set_RegisterValueChanged;
-            _provider = new ModbusProvider(args.Length > 1 ? args[1] : "167.116.185.10", 502);
+            _provider = new ModbusProvider(ip, 502);
             try
             {
                 if (!Directory.Exists(args[0])) Directory.CreateDirectory(args[0]);
