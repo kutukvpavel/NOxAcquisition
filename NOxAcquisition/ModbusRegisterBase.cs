@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace NOxAcquisition
 {
@@ -23,8 +24,11 @@ namespace NOxAcquisition
         }
 
         public string Name { get; }
+        [JsonIgnore]
         public RegisterTypes Type { get; }
+        [JsonIgnore]
         public ushort Address { get; }
+        [JsonIgnore]
         public ushort Length { get; }
         public T Value
         {
