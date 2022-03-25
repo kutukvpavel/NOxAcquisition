@@ -12,15 +12,8 @@ public class SocketProvider : StorageProviderBase
 
     public SocketProvider(int socket, RegisterSet regs) : base(regs)
     {
-        try
-        {
-            _Client = new UdpClient(socket);
-            Socket = socket;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-        }
+        _Client = new UdpClient(socket);
+        Socket = socket;
     }
 
     public async override void Store()
